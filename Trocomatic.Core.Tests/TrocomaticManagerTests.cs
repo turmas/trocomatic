@@ -21,7 +21,7 @@ namespace Trocomatic.Core.Tests
 			GetChangeResponse resultado = manager.GetChange(request);
 			//Assert
 			Assert.IsFalse(resultado.Success);
-			Assert.AreEqual(0, resultado.Coins.Count);
+			Assert.AreEqual(0, resultado.Details.Count);
 			Assert.AreEqual(Messages.TrocomaticManager_ValorPagoInvalido, resultado.Reports.First().Message);
 			Assert.AreEqual("GetChangeRequest.PaidAmount", resultado.Reports.First().FieldName);
 			Assert.AreEqual(OperationReport.MessageTypeEnum.Error, resultado.Reports.First().MessageType);
@@ -39,7 +39,7 @@ namespace Trocomatic.Core.Tests
 			GetChangeResponse resultado = manager.GetChange(request);
 			//Assert
 			Assert.IsFalse(resultado.Success);
-			Assert.AreEqual(0, resultado.Coins.Count);
+			Assert.AreEqual(0, resultado.Details.Count);
 			Assert.AreEqual(Messages.TrocomaticManager_ValorProdutoInvalido, resultado.Reports.First().Message);
 			Assert.AreEqual("GetChangeRequest.ProductAmount", resultado.Reports.First().FieldName);
 			Assert.AreEqual(OperationReport.MessageTypeEnum.Error, resultado.Reports.First().MessageType);
@@ -57,7 +57,7 @@ namespace Trocomatic.Core.Tests
 			GetChangeResponse resultado = manager.GetChange(request);
 			//Assert
 			Assert.IsFalse(resultado.Success);
-			Assert.AreEqual(0, resultado.Coins.Count);
+			Assert.AreEqual(0, resultado.Details.Count);
 			Assert.AreEqual(Messages.TrocomaticManager_ValorPagoInvalido, resultado.Reports.First().Message);
 			Assert.AreEqual("GetChangeRequest.PaidAmount", resultado.Reports.First().FieldName);
 			Assert.AreEqual(OperationReport.MessageTypeEnum.Error, resultado.Reports.First().MessageType);
@@ -75,7 +75,7 @@ namespace Trocomatic.Core.Tests
 			GetChangeResponse resultado = manager.GetChange(request);
 			//Assert
 			Assert.IsFalse(resultado.Success);
-			Assert.AreEqual(0, resultado.Coins.Count);
+			Assert.AreEqual(0, resultado.Details.Count);
 			Assert.AreEqual(Messages.TrocomaticManager_ValorProdutoInvalido, resultado.Reports.First().Message);
 			Assert.AreEqual("GetChangeRequest.ProductAmount", resultado.Reports.First().FieldName);
 			Assert.AreEqual(OperationReport.MessageTypeEnum.Error, resultado.Reports.First().MessageType);
@@ -90,11 +90,12 @@ namespace Trocomatic.Core.Tests
 			request.PaidAmount = 120;
 			request.ProductAmount = 20;
 			//Act
-			GetChangeResponse resultado = manager.GetChange(request);
+			GetChangeResponse response = manager.GetChange(request);
 			//Assert
-			Assert.IsTrue(resultado.Success);
-			Assert.AreEqual(1, resultado.Coins.Count);
-			Assert.AreEqual(100, resultado.Coins.First().Amount);
+			Assert.IsTrue(response.Success);
+			Assert.AreEqual(1, response.Details.Count);
+			Assert.AreEqual(100, response.Details.First().Amount);
+			Assert.AreEqual(MoneyType.Coin, response.Details.First().MoneyType);
 		}
 
 		[TestMethod]
@@ -106,12 +107,13 @@ namespace Trocomatic.Core.Tests
 			request.PaidAmount = 100;
 			request.ProductAmount = 25;
 			//Act
-			GetChangeResponse resultado = manager.GetChange(request);
+			GetChangeResponse response = manager.GetChange(request);
 			//Assert
-			Assert.IsTrue(resultado.Success);
-			Assert.AreEqual(2, resultado.Coins.Count);
-			Assert.AreEqual(50, resultado.Coins.First().Amount);
-			Assert.AreEqual(25, resultado.Coins.Last().Amount);
+			Assert.IsTrue(response.Success);
+			Assert.AreEqual(2, response.Details.Count);
+			Assert.AreEqual(50, response.Details.First().Amount);
+			Assert.AreEqual(25, response.Details.Last().Amount);
+			Assert.AreEqual(true, response.Details.All(x => x.MoneyType == MoneyType.Coin));
 		}
 
 		[TestMethod]
@@ -126,9 +128,10 @@ namespace Trocomatic.Core.Tests
 			GetChangeResponse resultado = manager.GetChange(request);
 			//Assert
 			Assert.IsFalse(resultado.Success);
-			Assert.AreEqual(0, resultado.Coins.Count);
+			Assert.AreEqual(0, resultado.Details.Count);
 			Assert.AreEqual(Messages.TrocomaticManager_ValorPagoInsuficiente, resultado.Reports.First().Message);
 			Assert.AreEqual("GetChangeRequest.PaidAmount", resultado.Reports.First().FieldName);
 		}
+
 	}
 }

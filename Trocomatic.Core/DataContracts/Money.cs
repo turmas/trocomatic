@@ -6,14 +6,17 @@ using System.Threading.Tasks;
 
 namespace Trocomatic.Core.DataContracts
 {
-	public class Coin
+	public enum MoneyType
 	{
+		Undefided = 0,
+		Bill,
+		Coin
+	}
 
-		public long Amount { get; private set; }
+	public class Money
+	{
+		public long Amount { get; set; }
 
-		public Coin(long amount)
-		{
-			this.Amount = amount;
-		}
+		public MoneyType Type { get; set; }
 	}
 }

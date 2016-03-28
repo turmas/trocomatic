@@ -10,10 +10,10 @@ namespace Trocomatic.Core.DataContracts
 	{
 		public GetChangeResponse()
 		{
-			Coins = new List<Coin>();
+			Details = new List<ChangeDetail>();
 			Reports = new List<OperationReport>();
 		}
-		public List<Coin> Coins { get; set; }
+		public List<ChangeDetail> Details { get; set; }
 
 		public long TotalChangeAmount { get; set; }
 
@@ -22,7 +22,7 @@ namespace Trocomatic.Core.DataContracts
 
 		public List<OperationReport> Reports { get; set; }
 
-		public void AddOperationReport(string fieldName, string message,
+		internal void AddOperationReport(string fieldName, string message,
 			OperationReport.MessageTypeEnum messageType = OperationReport.MessageTypeEnum.Error)
 		{
 			OperationReport report = new OperationReport();

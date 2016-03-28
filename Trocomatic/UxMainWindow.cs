@@ -31,15 +31,14 @@ namespace Trocomatic
 			//Pegar lista de moedas
 			GetChangeResponse response = this.CalculateChange(paidAmount, productAmount);
 			this.CleanForm();
-			if (response.Success && response.Coins != null && response.Coins.Any())
+			if (response.Success && response.Details != null && response.Details.Any())
 			{ 
 				//Exibir no textbox
 				
 				this.UxTbxChangeResult.Text += "Total de troco: " + response.TotalChangeAmount + Environment.NewLine;
-				var groups = response.Coins.GroupBy(c => c.Amount);
-				foreach (var g in groups)
+				 foreach (var d in response.Details)
 				{
-					this.UxTbxChangeResult.Text += g.Count() + " Moedas de " + g.Key.ToString() + Environment.NewLine;
+					this.UxTbxChangeResult.Text += d.Quantity + " " + d.MoneyType + " de " + d.Amount + Environment.NewLine;
 				}
 			}
 			else
@@ -49,8 +48,6 @@ namespace Trocomatic
 				}
 				
 			}
-
-
 		}
 
 		private GetChangeResponse CalculateChange(long paidValue, long productValue)
