@@ -9,14 +9,16 @@ namespace Trocomatic.Core.DataContracts
 	public enum MoneyType
 	{
 		Undefided = 0,
+		Silver,
 		Bill,
-		Coin
+		Coin,
+		Candy
 	}
 
-	public class Money
+	public abstract class Money
 	{
 		public long Amount { get; set; }
 
-		public MoneyType Type { get; set; }
+		public abstract MoneyType Type { get;  }
 	}
 }

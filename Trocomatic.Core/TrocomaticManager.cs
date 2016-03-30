@@ -9,6 +9,14 @@ namespace Trocomatic.Core
 {
 	public class TrocomaticManager
 	{
+		private readonly IChangeProcessorFactory _factory;
+
+		public TrocomaticManager(IChangeProcessorFactory factory)
+		{
+			this._factory = factory;
+		}
+
+
 		public GetChangeResponse GetChange(GetChangeRequest request)
 		{
 			GetChangeResponse response = new GetChangeResponse();
@@ -24,7 +32,7 @@ namespace Trocomatic.Core
 				response.TotalChangeAmount = request.PaidAmount - request.ProductAmount;
 				response.Details.AddRange(GetChangeDetails(response.TotalChangeAmount));
 			}
-			catch (Exception)
+			catch (Exception ex)
 			{
 				OperationReport report = new OperationReport();
 				report.Message = "A operação não foi realizada.";
@@ -38,34 +46,21 @@ namespace Trocomatic.Core
 		private List<ChangeDetail> GetChangeDetails(long changeAmount)
 		{
 			List<ChangeDetail> details = new List<ChangeDetail>();
-			Money[] existingAmounts = AbstractMoneyFactory.GetCurrencyAmounts()
-			   .OrderByDescending(x => x.Amount).ToArray();
 
-			int index = 0;
-
-
-			while (changeAmount > 0 && existingAmounts.Length > index)
+			//Pega o processador de acordo com o valor do troco
+			IChangeProcessor processor = _factory.GetProcessor(changeAmount);
+			while (changeAmount > 0 && processor != null)
 			{
-				long currentAmount = existingAmounts[index].Amount;
-				long quantity = changeAmount / currentAmount;
-
-				if (quantity > 0)
-				{
-
-					details.Add(new ChangeDetail()
-					{
-						Amount = currentAmount,
-						MoneyType = existingAmounts[index].Type,
-						Quantity = quantity
-
-					});
-
-					changeAmount = changeAmount % currentAmount;
-				}
-
-				index = index + 1;
+				//Processa o troco
+				details.AddRange(processor.GetChange(ref changeAmount));
+				//Pega o processador de acordo com o valor restante se existe
+				processor = _factory.GetProcessor(changeAmount);
 			}
+			if (changeAmount > 0)
+				throw new Exception("Não é possível dar o troco");
+
 			return details;
+
 		}
 	}
 }

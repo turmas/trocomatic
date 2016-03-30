@@ -28,31 +28,33 @@ namespace Trocomatic
 		{
 			long paidAmount = long.Parse(this.UxTbxPaidValue.Text);
 			long productAmount = long.Parse(this.UxTbxProductValue.Text);
+
 			//Pegar lista de moedas
 			GetChangeResponse response = this.CalculateChange(paidAmount, productAmount);
+
 			this.CleanForm();
 			if (response.Success && response.Details != null && response.Details.Any())
-			{ 
+			{
 				//Exibir no textbox
-				
 				this.UxTbxChangeResult.Text += "Total de troco: " + response.TotalChangeAmount + Environment.NewLine;
-				 foreach (var d in response.Details)
+
+				foreach (var d in response.Details)
 				{
 					this.UxTbxChangeResult.Text += d.Quantity + " " + d.MoneyType + " de " + d.Amount + Environment.NewLine;
 				}
 			}
 			else
 			{
-				foreach(var r in response.Reports){
-					this.UxTbxChangeResult.Text +=  r.Message + Environment.NewLine;
+				foreach (var r in response.Reports)
+				{
+					this.UxTbxChangeResult.Text += r.Message + Environment.NewLine;
 				}
-				
 			}
 		}
 
 		private GetChangeResponse CalculateChange(long paidValue, long productValue)
 		{
-			TrocomaticManager manager = new TrocomaticManager();
+			TrocomaticManager manager = new TrocomaticManager(new ChangeProcessorFactory());
 			GetChangeRequest request = new GetChangeRequest();
 
 			request.PaidAmount = paidValue;
