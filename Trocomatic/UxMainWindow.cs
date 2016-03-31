@@ -9,11 +9,17 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Trocomatic.Core;
 using Trocomatic.Core.DataContracts;
+using Trocomatic.Infrastructure;
 
 namespace Trocomatic
 {
 	public partial class UxMainForm : Form
 	{
+		 
+			 
+		private TrocomaticManager _manager = new 
+			TrocomaticManager(new ChangeProcessorFactory());
+			
 		public UxMainForm()
 		{
 			InitializeComponent();
@@ -26,41 +32,49 @@ namespace Trocomatic
 
 		private void DisplayChange()
 		{
-			long paidAmount = long.Parse(this.UxTbxPaidValue.Text);
-			long productAmount = long.Parse(this.UxTbxProductValue.Text);
-
-			//Pegar lista de moedas
-			GetChangeResponse response = this.CalculateChange(paidAmount, productAmount);
-
-			this.CleanForm();
-			if (response.Success && response.Details != null && response.Details.Any())
+			try
 			{
-				//Exibir no textbox
-				this.UxTbxChangeResult.Text += "Total de troco: " + response.TotalChangeAmount + Environment.NewLine;
+				long paidAmount = long.Parse(this.UxTbxPaidValue.Text);
+				long productAmount = long.Parse(this.UxTbxProductValue.Text);
 
-				foreach (var d in response.Details)
+				//Pegar lista de moedas
+				GetChangeResponse response = this.CalculateChange(paidAmount, productAmount);
+
+				this.CleanForm();
+				if (response.Success && response.Details != null && response.Details.Any())
 				{
-					this.UxTbxChangeResult.Text += d.Quantity + " " + d.MoneyType + " de " + d.Amount + Environment.NewLine;
+					//Exibir no textbox
+					this.UxTbxChangeResult.Text += "Total de troco: " + response.TotalChangeAmount + Environment.NewLine;
+
+					foreach (var d in response.Details)
+					{
+						this.UxTbxChangeResult.Text += d.Quantity + " " + d.MoneyType + " de " + d.Amount + Environment.NewLine;
+					}
+				}
+				else
+				{
+					foreach (var r in response.Reports)
+					{
+						this.UxTbxChangeResult.Text += r.Message + Environment.NewLine;
+					}
 				}
 			}
-			else
+			catch (Exception ex)
 			{
-				foreach (var r in response.Reports)
-				{
-					this.UxTbxChangeResult.Text += r.Message + Environment.NewLine;
-				}
+				LoggerFactory.GetLogger().GenerateExceptionLog(ex);
+				MessageBox.Show("Erro inesperado.");
 			}
+			
 		}
 
 		private GetChangeResponse CalculateChange(long paidValue, long productValue)
 		{
-			TrocomaticManager manager = new TrocomaticManager(new ChangeProcessorFactory());
 			GetChangeRequest request = new GetChangeRequest();
 
 			request.PaidAmount = paidValue;
 			request.ProductAmount = productValue;
 
-			GetChangeResponse response = manager.GetChange(request);
+			GetChangeResponse response = this._manager.GetChange(request);
 
 			return response;
 		}

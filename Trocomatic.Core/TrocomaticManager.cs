@@ -4,16 +4,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Trocomatic.Core.DataContracts;
-
+using Trocomatic.Infrastructure;
 namespace Trocomatic.Core
 {
 	public class TrocomaticManager
 	{
 		private readonly IChangeProcessorFactory _factory;
-
+		private readonly ILogger _logger;
 		public TrocomaticManager(IChangeProcessorFactory factory)
 		{
 			this._factory = factory;
+			this._logger = LoggerFactory.GetLogger();
 		}
 
 
@@ -23,6 +24,7 @@ namespace Trocomatic.Core
 
 			try
 			{
+				_logger.GenerateRequestLog(request);
 				if (request.IsValid == false)
 				{
 					response.Reports = request.ValidationReport;
@@ -34,12 +36,14 @@ namespace Trocomatic.Core
 			}
 			catch (Exception ex)
 			{
+				_logger.GenerateExceptionLog(ex);
 				OperationReport report = new OperationReport();
 				report.Message = "A operação não foi realizada.";
 				report.MessageType = OperationReport.MessageTypeEnum.Error;
 
 				response.Reports.Add(report);
 			}
+			_logger.GenerateResponseLog(response);
 			return response;
 		}
 

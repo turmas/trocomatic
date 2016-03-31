@@ -12,7 +12,8 @@ namespace Trocomatic.Core.DataContracts
 		Silver,
 		Bill,
 		Coin,
-		Candy
+		Candy,
+		Gold
 	}
 
 	public abstract class Money

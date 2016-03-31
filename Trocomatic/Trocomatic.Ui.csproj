@@ -86,6 +86,10 @@
       <Project>{34a7c825-d418-47a1-88f8-2e8306c5624d}</Project>
       <Name>Trocomatic.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Trocomatic.Infrastructure\Trocomatic.Infrastructure.csproj">
+      <Project>{05f4c8f1-67fb-408b-8cb4-31ec3a6879cc}</Project>
+      <Name>Trocomatic.Infrastructure</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
