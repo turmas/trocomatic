@@ -9,8 +9,10 @@ namespace Trocomatic.Infrastructure
 {
 	public interface ILogger
 	{
-		void GenerateRequestLog(object request, [CallerMemberName] string methodName = null);
-		void GenerateResponseLog(object request, [CallerMemberName] string methodName = null);
-		void GenerateExceptionLog(Exception ex, [CallerMemberName] string methodName = null);
+		//void GenerateRequestLog(object request, [CallerMemberName] string methodName = null);
+		//void GenerateResponseLog(object request, [CallerMemberName] string methodName = null);
+		//void GenerateExceptionLog(Exception ex, [CallerMemberName] string methodName = null);
+
+		void Save(object data, LogType type, [CallerMemberName] string methodName = null);
 	}
 }

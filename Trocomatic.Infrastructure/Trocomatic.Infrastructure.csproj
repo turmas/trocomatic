@@ -49,6 +49,7 @@
     <Compile Include="FileLogger.cs" />
     <Compile Include="ILogger.cs" />
     <Compile Include="LoggerFactory.cs" />
+    <Compile Include="LogInterceptor.cs" />
     <Compile Include="LogRecord.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

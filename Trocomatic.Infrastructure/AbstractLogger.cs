@@ -53,5 +53,22 @@ namespace Trocomatic.Infrastructure
 		}
 
 		protected abstract void WriteLog(LogRecord record);
+
+		public void Save(object data, LogType type, string methodName = null)
+		{
+			if (data is Exception) {
+				data = data.ToString();
+			}
+
+			string logData = Serializer.JsonSerialize(data);
+
+			WriteLog(new LogRecord()
+			{
+				Type = type,
+				Message = logData,
+				Method = methodName,
+				Date = DateTime.Now
+			});
+		}
 	}
 }

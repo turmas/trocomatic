@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Dlp.Framework.Container;
+using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,21 +12,28 @@ namespace Trocomatic.Core
 	public class TrocomaticManager
 	{
 		private readonly IChangeProcessorFactory _factory;
-		private readonly ILogger _logger;
+		//private readonly ILogger _logger;
 		public TrocomaticManager(IChangeProcessorFactory factory)
 		{
-			this._factory = factory;
-			this._logger = LoggerFactory.GetLogger();
-		}
+			IocFactory.Register(
+					Component.For<ILogger>()
+					.ImplementedBy<FileLogger>()
+					.ImplementedBy<EventLogger>()
+				);
 
+			this._factory = factory;
+			//this._logger = LoggerFactory.GetLogger();
+		}
 
 		public GetChangeResponse GetChange(GetChangeRequest request)
 		{
 			GetChangeResponse response = new GetChangeResponse();
 
+			ILogger _logger = IocFactory.Resolve<ILogger>();
+
 			try
 			{
-				_logger.GenerateRequestLog(request);
+				_logger.Save(request, LogType.Request);
 				if (request.IsValid == false)
 				{
 					response.Reports = request.ValidationReport;
@@ -36,14 +45,14 @@ namespace Trocomatic.Core
 			}
 			catch (Exception ex)
 			{
-				_logger.GenerateExceptionLog(ex);
+				_logger.Save(ex, LogType.Exception);
 				OperationReport report = new OperationReport();
 				report.Message = "A operação não foi realizada.";
 				report.MessageType = OperationReport.MessageTypeEnum.Error;
 
 				response.Reports.Add(report);
 			}
-			_logger.GenerateResponseLog(response);
+			_logger.Save(response, LogType.Response);
 			return response;
 		}
 

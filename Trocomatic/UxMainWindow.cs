@@ -61,7 +61,7 @@ namespace Trocomatic
 			}
 			catch (Exception ex)
 			{
-				LoggerFactory.GetLogger().GenerateExceptionLog(ex);
+				LoggerFactory.GetLogger().Save(ex, LogType.Exception);
 				MessageBox.Show("Erro inesperado.");
 			}
 			
